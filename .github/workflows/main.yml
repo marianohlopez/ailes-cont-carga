@@ -1,0 +1,39 @@
+name: Test Google Drive Access
+
+on:
+  workflow_dispatch: # Ejecutarlo manualmente desde GitHub
+
+permissions:
+  id-token: write # Necesario para Workload Identity Federation
+  contents: read # Para leer el repo
+
+jobs:
+  test-drive:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install requirements
+        run: |
+          pip install google-api-python-client google-auth google-auth-httplib2 google-auth-oauthlib
+
+      - name: Authenticate to Google Cloud (WIF)
+        id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          # TU POOL + TU PROVIDER
+          workload_identity_provider: "projects/834426860635/locations/global/workloadIdentityPools/github-pool/providers/github-actions"
+
+          # TU SERVICE ACCOUNT
+          service_account: "bot-drive-contable@drive-contable.iam.gserviceaccount.com"
+
+      - name: Run test script
+        run: |
+          python test.py
