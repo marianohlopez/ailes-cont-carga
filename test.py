@@ -69,7 +69,7 @@ def main():
         print("⚠ No se encontró la columna 'A indyco' en la hoja.")
         return
 
-    indyco_col_idx = headers.index("A indyco") + 1
+    indyco_col_idx = headers.index("A Indyco") + 1
 
     # Iterar filas desde la segunda (los datos)
     found = False
