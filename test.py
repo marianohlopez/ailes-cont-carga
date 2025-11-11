@@ -8,7 +8,7 @@ def main():
 
     print("\n✅ Autenticación correcta con la Service Account")
 
-    DRIVE_ID = "0ALVObxz8zlW1Uk9PVA"  # tu unidad compartida
+    DRIVE_ID = "0ALVObxz8zlW1Uk9PVA" 
     print(f"\n📂 Listando archivos dentro de la unidad compartida {DRIVE_ID}:\n")
 
     results = service.files().list(
