@@ -65,11 +65,13 @@ def main():
 
     # Encontrar índice de la columna "A indyco"
     headers = [cell.value for cell in next(sheet.iter_rows(min_row=1, max_row=1))]
-    if "A indyco" not in headers:
+    normalized = [str(h).strip().lower() if h is not None else "" for h in headers]
+    
+    if "a indyco" not in normalized:
         print("⚠ No se encontró la columna 'A indyco' en la hoja.")
         return
 
-    indyco_col_idx = headers.index("A Indyco") + 1
+    indyco_col_idx = normalized.index("a indyco") + 1
 
     # Iterar filas desde la segunda (los datos)
     found = False
