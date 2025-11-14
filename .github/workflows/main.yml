@@ -33,6 +33,9 @@ jobs:
 
           service_account: "bot-drive-contable@drive-contable.iam.gserviceaccount.com"
 
-      - name: Run test script
+      - name: Run load script
+        env:
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          PASSWORD: ${{ secrets.PASSWORD }}
         run: |
           python main.py
