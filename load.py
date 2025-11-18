@@ -31,7 +31,10 @@ def load_data(email, password, data):
             # Filtrando por id de factura
             input_fc.fill(str(fc_id))
 
-            time.sleep(8)
+            # Esperar a que aparezca el input hidden con el factura_id correcto
+            page.wait_for_selector(f'span:has-text("{fc_id}")')
+            
+            print(f"✅ Factura {fc_id} encontrada en la tabla")
 
             rows = table.locator("tbody tr")
             row_count = rows.count()
