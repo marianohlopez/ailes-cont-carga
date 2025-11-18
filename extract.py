@@ -5,7 +5,7 @@ import io
 from openpyxl import load_workbook
 
 def extract_data():
-    """ creds, _ = default()
+    creds, _ = default()
     service = build("drive", "v3", credentials=creds)
 
     print("\n✅ Autenticación correcta con la Service Account")
@@ -51,12 +51,12 @@ def extract_data():
         status, done = downloader.next_chunk()
         print(f"   Progreso: {int(status.progress() * 100)}%")
 
-    fh.seek(0) """
+    fh.seek(0)
 
     # ----------------------------
     # 3️⃣ Leer el archivo con openpyxl
     # ----------------------------
-    wb = load_workbook("reporte_contable.xlsx", data_only=True)
+    wb = load_workbook(fh, data_only=True)
     
     todas_las_filas = []
 
