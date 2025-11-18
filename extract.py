@@ -10,7 +10,7 @@ def extract_data():
 
     print("\n✅ Autenticación correcta con la Service Account")
 
-    DRIVE_ID = "1nRvf2qydJ0G9pB8Yf9PCgfE_5ga9rEjq" 
+    PARENT_FOLDER_ID = "1nRvf2qydJ0G9pB8Yf9PCgfE_5ga9rEjq" 
     TARGET_FILENAME = "reporte_contable.xlsx"
 
     # ----------------------------
@@ -19,12 +19,13 @@ def extract_data():
     print(f"\n🔍 Buscando '{TARGET_FILENAME}' en la unidad compartida...\n")
 
     results = service.files().list(
-        q=f"name='{TARGET_FILENAME}' and mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'",
-        corpora="drive",
-        driveId=DRIVE_ID,
-        includeItemsFromAllDrives=True,
-        supportsAllDrives=True,
-        fields="files(id, name)"
+    q=f"'{PARENT_FOLDER_ID}' in parents "
+      f"and name='{TARGET_FILENAME}' "
+      f"and mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'",
+    corpora="allDrives",
+    includeItemsFromAllDrives=True,
+    supportsAllDrives=True,
+    fields="files(id, name, parents)"
     ).execute()
 
     files = results.get("files", [])
