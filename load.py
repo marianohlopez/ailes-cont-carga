@@ -30,7 +30,8 @@ def load_data(email, password, data):
 
             # Filtrando por id de factura
             input_fc.fill(str(fc_id))
-            time.sleep(6)
+
+            page.wait_for_selector(f'text="{fc_id}"', timeout=10000)
 
             rows = table.locator("tbody tr")
             row_count = rows.count()
@@ -63,7 +64,6 @@ def load_data(email, password, data):
                 obs = data_row[-2]
                 state = data_row[5]
 
-                print(row_indyco)
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 if (state == row_indyco[28] and fact_imp == row_indyco[12] and fec_fact == row_indyco[26]
                     and fec_env == row_indyco[-15] and periodo == row_indyco[30] 
