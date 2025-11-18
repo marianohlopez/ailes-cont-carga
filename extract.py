@@ -10,7 +10,7 @@ def extract_data():
 
     print("\n✅ Autenticación correcta con la Service Account")
 
-    DRIVE_ID = "0ALVObxz8zlW1Uk9PVA"  # ID de la unidad compartida
+    DRIVE_ID = "1nRvf2qydJ0G9pB8Yf9PCgfE_5ga9rEjq" 
     TARGET_FILENAME = "reporte_contable.xlsx"
 
     # ----------------------------
