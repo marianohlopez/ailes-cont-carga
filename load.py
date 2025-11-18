@@ -31,14 +31,7 @@ def load_data(email, password, data):
             # Filtrando por id de factura
             input_fc.fill(str(fc_id))
 
-            # 1. Esperar a que la tabla vieja desaparezca
-            page.wait_for_selector("tbody tr", state="detached", timeout=20000)
-
-            # 2. Esperar a que la tabla recargue alguna fila nueva
-            page.wait_for_selector("tbody tr", state="attached", timeout=20000)
-
-            # 3. Esperar a que aparezca el texto de la factura actual
-            page.wait_for_selector(f"text=\"{fc_id}\"", timeout=20000)
+            time.sleep(8)
 
             rows = table.locator("tbody tr")
             row_count = rows.count()
