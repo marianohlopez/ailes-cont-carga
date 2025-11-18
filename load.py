@@ -28,10 +28,21 @@ def load_data(email, password, data):
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
 
-            # Filtrando por id de factura
+            # Filtrando por id
+            rows = table.locator("tbody tr")
+            prev_count = rows.count()
+
             input_fc.fill(str(fc_id))
 
-            page.wait_for_selector(f'text="{fc_id}"', timeout=10000)
+            # Esperar a que Livewire refresque la tabla
+            page.wait_for_function(
+                """(prev) => {
+                    const rows = document.querySelectorAll("table#table_base_default tbody tr");
+                    return rows.length !== prev;
+                }""",
+                arg=prev_count,
+                timeout=30000  # 30s porque Actions es lento
+            )
 
             rows = table.locator("tbody tr")
             row_count = rows.count()
