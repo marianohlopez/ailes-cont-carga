@@ -8,39 +8,12 @@ permissions:
   contents: read
 
 jobs:
-  test-drive:
+  run-docker:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-
-      - name: Cache pip dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache Playwright browsers
-        uses: actions/cache@v3
-        with:
-          path: ~/.cache/ms-playwright
-          key: ${{ runner.os }}-playwright
-
-      - name: Install requirements
-        run: |
-          pip install -r requirements.txt
-
-      - name: Install Playwright browsers
-        run: |
-          playwright install
 
       - name: Authenticate to Google Cloud (WIF)
         id: auth
@@ -49,9 +22,15 @@ jobs:
           workload_identity_provider: "projects/834426860635/locations/global/workloadIdentityPools/github-pool/providers/github-actions"
           service_account: "bot-drive-contable@drive-contable.iam.gserviceaccount.com"
 
-      - name: Run load script
+      - name: Build Docker image
+        run: docker build -t contable-scraper .
+
+      - name: Run scraping container
         env:
           MAIL_USER: ${{ secrets.MAIL_USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
         run: |
-          python main.py
+          docker run \
+            -e MAIL_USER="$MAIL_USER" \
+            -e PASSWORD="$PASSWORD" \
+            contable-scraper
