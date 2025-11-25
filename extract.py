@@ -62,12 +62,19 @@ def extract_data():
     # 3️⃣ Leer el archivo con openpyxl
     # ----------------------------
     wb = load_workbook(fh, data_only=True)
+
+    HOJAS_OBJETIVO = ["Alertas", "Cobradas dentro de los 60 días"]
     
     todas_las_filas = []
 
     # Recorremos las dos primeras hojas
-    for idx, sheet in enumerate(wb.worksheets[:2], start=1):
-        print(f"\n📄 Procesando hoja {idx}: {sheet.title}")
+    for nombre in HOJAS_OBJETIVO:
+        if nombre not in wb.sheetnames:
+            print(f"⚠ La hoja '{nombre}' no existe en el archivo")
+            continue
+
+        sheet = wb[nombre]
+        print(f"\n📄 Procesando hoja: {sheet.title}")
 
         # Leer y pasar a minuscula encabezados
         headers = [cell.value for cell in next(sheet.iter_rows(min_row=1, max_row=1))]
