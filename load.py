@@ -5,7 +5,7 @@ from datetime import datetime
 
 def load_data(email, password, data):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context()
         page = context.new_page()
 
@@ -18,21 +18,29 @@ def load_data(email, password, data):
         page.goto(url)
         page.wait_for_load_state("networkidle")
 
-        table = page.locator("table#table_base_default")
+        table = page.locator("table#table_base_facturas_emitidas_grid")
         table.locator("tbody tr").first.wait_for(state="visible")
 
-        # ✅ Selector del filtro por año
-        input_fc = page.locator('input[wire\\:model="filters.input_text.fc_cbtes"]')
-
+        # ✅ Selector del filtro por nro de comprobante
+        input_fc = page.locator('input[wire\\:model\\.defer="nroComprobante"]')
+        # BUsco el boton de buscar
+        btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
         for data_row in data: 
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
 
             # Filtrando por id de factura
+            input_fc.fill("")
             input_fc.fill(str(fc_id))
+            # Click en Buscar
+            btn_buscar.click()
 
             # Esperar a que aparezca el input hidden con el factura_id correcto
-            page.wait_for_selector(f'span:has-text("{fc_id}")')
+            page.wait_for_selector(
+                f'table#table_base_facturas_emitidas_grid div:has-text("{fc_id}")',
+                state="attached",
+                timeout=10000
+            )
             
             print(f"✅ Factura {fc_id} encontrada en la tabla")
 
@@ -65,13 +73,31 @@ def load_data(email, password, data):
                 lst_name = data_row[8].split(",")[0].strip()
                 name = data_row[8].split(",")[1].strip()
                 obs = data_row[-2]
-                state = data_row[5]
+                state = data_row[5]       
+
+                print(row_indyco[30])
+                print(row_indyco[14])      
+
+                print(row_indyco[28])      
+
+                print(row_indyco[-21])      
+
+                print(row_indyco[32])      
+                print(row_indyco[-30])      
+                print(row_indyco[35])      
+
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
-                if (state == row_indyco[28] and fact_imp == row_indyco[12] and fec_fact == row_indyco[26]
-                    and fec_env == row_indyco[-15] and periodo == row_indyco[30] 
-                    and os_alum == row_indyco[-21] and lst_name == row_indyco[-27]
-                    and name == row_indyco[-26] and obs.strip() != row_indyco[11].strip()):
+                if (state == ' '.join(row_indyco[30].split()) and fact_imp == row_indyco[14] and fec_fact == row_indyco[28]
+                    and fec_env == row_indyco[-21] and periodo == row_indyco[32] 
+                    and os_alum == row_indyco[-30] and f"{name} {lst_name}" == row_indyco[35].split('(')[0].strip()
+                    ):
+
+                    # Comparacion con string de indyco sin saltos de lineas
+                    if obs.strip() == ' '.join(row_indyco[12].split()):
+                        print(f'La observacion de la factura {fc_id} ya esta en indyco, '
+                                'pasando a la siguiente...')
+                        continue
 
                     print(f"✅ Factura {fc_id} encontrada, procediendo a editar...")
                         
@@ -123,6 +149,9 @@ def load_data(email, password, data):
 
                     else:
                         print(f"❌ No se encontró el botón de edición para la factura {fc_id}")    
+
+                else:
+                    print(f"❌ Factura {fc_id} NO coincide con el excel contable.")
 
         browser.close()
 
