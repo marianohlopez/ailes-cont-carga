@@ -69,13 +69,14 @@ def load_data(email, password, data):
                 fec_fact = data_row[2].strftime("%d/%m/%Y")    
                 fec_env = datetime.strptime(data_row[3], "%Y-%m-%d").strftime("%d/%m/%Y")   
                 periodo = data_row[6]   
-                os_alum = data_row[7]
+                os_alum = data_row[7].strip()
                 lst_name = data_row[8].split(",")[0].strip()
                 name = data_row[8].split(",")[1].strip()
+                full_name = f'{name} {lst_name}'
                 obs = data_row[-2]
                 state = data_row[5]       
 
-                print(row_indyco[30])
+                """ print(' '.join(row_indyco[30].split()))
                 print(row_indyco[14])      
 
                 print(row_indyco[28])      
@@ -83,14 +84,20 @@ def load_data(email, password, data):
                 print(row_indyco[-21])      
 
                 print(row_indyco[32])      
-                print(row_indyco[-30])      
-                print(row_indyco[35])      
-
+                print(row_indyco[-34])      
+                print(row_indyco[35].split('(')[0].strip())     
+                print(full_name == row_indyco[35].split('(')[0].strip()) 
+                print(state == ' '.join(row_indyco[30].split()))
+                print(fact_imp == row_indyco[14])
+                print(fec_fact == row_indyco[28])
+                print(fec_env == row_indyco[-21])
+                print(periodo == row_indyco[32])
+                print(os_alum == row_indyco[-34]) """
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 if (state == ' '.join(row_indyco[30].split()) and fact_imp == row_indyco[14] and fec_fact == row_indyco[28]
                     and fec_env == row_indyco[-21] and periodo == row_indyco[32] 
-                    and os_alum == row_indyco[-30] and f"{name} {lst_name}" == row_indyco[35].split('(')[0].strip()
+                    and os_alum == row_indyco[-34] and full_name == row_indyco[35].split('(')[0].strip()
                     ):
 
                     # Comparacion con string de indyco sin saltos de lineas
