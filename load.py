@@ -2,6 +2,15 @@ from playwright.sync_api import sync_playwright
 from login import login
 import time
 from datetime import datetime
+import re
+
+def normalizar_texto(txt):
+    if not txt:
+        return ''
+    txt = txt.lower()
+    txt = txt.replace('<br>', ' ')
+    txt = re.sub(r'\s+', ' ', txt)  # espacios, tabs, saltos de línea
+    return txt.strip()
 
 def load_data(email, password, data):
     with sync_playwright() as p:
@@ -22,18 +31,28 @@ def load_data(email, password, data):
         table.locator("tbody tr").first.wait_for(state="visible")
 
         # ✅ Selector del filtro por nro de comprobante
-        input_fc = page.locator('input[wire\\:model\\.defer="nroComprobante"]')
+        input_fc = page.locator('#ts-nros-comprobante-ts-control')
         # BUsco el boton de buscar
         btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
+        btn_limpiar = page.locator('button:has-text("Limpiar")')
+
         for data_row in data: 
+            # Limpiar filtros
+            btn_limpiar.click()
+            page.wait_for_timeout(3000)
+
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
 
             # Filtrando por id de factura
             input_fc.fill("")
             input_fc.fill(str(fc_id))
+
             # Click en Buscar
             btn_buscar.click()
+            page.wait_for_timeout(500) 
+            btn_buscar.click()
+            page.wait_for_timeout(500)
 
             # Esperar a que aparezca el input hidden con el factura_id correcto
             page.wait_for_selector(
@@ -100,8 +119,11 @@ def load_data(email, password, data):
                     and os_alum == row_indyco[-34] and full_name == row_indyco[35].split('(')[0].strip()
                     ):
 
+                    obs_excel = normalizar_texto(obs)
+                    obs_indyco = normalizar_texto(row_indyco[12])
+
                     # Comparacion con string de indyco sin saltos de lineas
-                    if obs.strip() == ' '.join(row_indyco[12].split()):
+                    if obs_excel == obs_indyco:
                         print(f'La observacion de la factura {fc_id} ya esta en indyco, '
                                 'pasando a la siguiente...')
                         continue
