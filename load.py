@@ -35,11 +35,20 @@ def load_data(email, password, data):
         # BUsco el boton de buscar
         btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
         btn_limpiar = page.locator('button:has-text("Limpiar")')
+        btn_limpiar.click()
+        page.wait_for_timeout(3000)
+        count_clean = 0
 
         for data_row in data: 
-            # Limpiar filtros
-            btn_limpiar.click()
-            page.wait_for_timeout(3000)
+
+            count_clean += 1
+
+            if count_clean == 3:
+                # Limpiar filtros
+                print("🧹 Limpiando filtros")
+                btn_limpiar.click()
+                page.wait_for_timeout(3000)
+                count_clean = 0
 
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
@@ -47,18 +56,17 @@ def load_data(email, password, data):
             # Filtrando por id de factura
             input_fc.fill("")
             input_fc.fill(str(fc_id))
-
+            input_fc.press("Tab")
+            page.wait_for_timeout(1000)
             # Click en Buscar
             btn_buscar.click()
-            page.wait_for_timeout(500) 
-            btn_buscar.click()
-            page.wait_for_timeout(500)
+            page.wait_for_timeout(1000)
 
             # Esperar a que aparezca el input hidden con el factura_id correcto
             page.wait_for_selector(
                 f'table#table_base_facturas_emitidas_grid div:has-text("{fc_id}")',
                 state="attached",
-                timeout=10000
+                timeout=20000
             )
             
             print(f"✅ Factura {fc_id} encontrada en la tabla")
@@ -95,28 +103,19 @@ def load_data(email, password, data):
                 obs = data_row[-2]
                 state = data_row[5]       
 
-                """ print(' '.join(row_indyco[30].split()))
-                print(row_indyco[14])      
-
-                print(row_indyco[28])      
-
-                print(row_indyco[-21])      
-
-                print(row_indyco[32])      
-                print(row_indyco[-34])      
-                print(row_indyco[35].split('(')[0].strip())     
-                print(full_name == row_indyco[35].split('(')[0].strip()) 
-                print(state == ' '.join(row_indyco[30].split()))
-                print(fact_imp == row_indyco[14])
-                print(fec_fact == row_indyco[28])
-                print(fec_env == row_indyco[-21])
-                print(periodo == row_indyco[32])
-                print(os_alum == row_indyco[-34]) """
+                """ print(' '.join(row_indyco[30].split()), f'excel: {state}', state == ' '.join(row_indyco[30].split()))
+                print(row_indyco[14], f'excel: {fact_imp}', fact_imp == row_indyco[14])      
+                print(row_indyco[28], f'excel: {fec_fact}', fec_fact == row_indyco[28])      
+                print(row_indyco[-21], f'excel: {fec_env}', fec_env == row_indyco[-21])      
+                print(row_indyco[32], f'excel: {periodo}', periodo == row_indyco[32])      
+                print(row_indyco[-34],f'excel: {os_alum}', os_alum == row_indyco[-34])      
+                print(row_indyco[35].split('(')[0].strip(), f'{full_name}' ,full_name == row_indyco[35].split('(')[0].strip()) """     
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
-                if (state == ' '.join(row_indyco[30].split()) and fact_imp == row_indyco[14] and fec_fact == row_indyco[28]
+                # No comparamos estado ni OS por si se modifica en indyco
+                if (fc_id == row_indyco[6] and fact_imp == row_indyco[14] and fec_fact == row_indyco[28]
                     and fec_env == row_indyco[-21] and periodo == row_indyco[32] 
-                    and os_alum == row_indyco[-34] and full_name == row_indyco[35].split('(')[0].strip()
+                    and full_name == row_indyco[35].split('(')[0].strip()
                     ):
 
                     obs_excel = normalizar_texto(obs)
