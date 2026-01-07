@@ -36,7 +36,7 @@ def load_data(email, password, data):
         btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
         btn_limpiar = page.locator('button:has-text("Limpiar")')
         btn_limpiar.click()
-        page.wait_for_timeout(3000)
+        page.wait_for_timeout(4000)
         count_clean = 0
 
         for data_row in data: 
@@ -47,17 +47,18 @@ def load_data(email, password, data):
                 # Limpiar filtros
                 print("🧹 Limpiando filtros")
                 btn_limpiar.click()
-                page.wait_for_timeout(3000)
+                page.wait_for_timeout(4000)
                 count_clean = 0
 
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
 
-            # Filtrando por id de factura
-            input_fc.fill("")
+            # Filtrando por id de factur
             input_fc.fill(str(fc_id))
+            page.wait_for_timeout(1000)
             input_fc.press("Tab")
             page.wait_for_timeout(1000)
+
             # Click en Buscar
             btn_buscar.click()
             page.wait_for_timeout(1000)
@@ -107,9 +108,9 @@ def load_data(email, password, data):
                 print(row_indyco[14], f'excel: {fact_imp}', fact_imp == row_indyco[14])      
                 print(row_indyco[28], f'excel: {fec_fact}', fec_fact == row_indyco[28])      
                 print(row_indyco[-21], f'excel: {fec_env}', fec_env == row_indyco[-21])      
-                print(row_indyco[32], f'excel: {periodo}', periodo == row_indyco[32])      
-                print(row_indyco[-34],f'excel: {os_alum}', os_alum == row_indyco[-34])      
-                print(row_indyco[35].split('(')[0].strip(), f'{full_name}' ,full_name == row_indyco[35].split('(')[0].strip()) """     
+                print(row_indyco[32], f'excel: {periodo}', periodo == row_indyco[32])  
+                print(row_indyco[35].split('(')[0].strip(), f'{full_name}' ,full_name == row_indyco[35].split('(')[0].strip())     
+                print(row_indyco[-34],f'excel: {os_alum}', os_alum == row_indyco[-34]) """          
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 # No comparamos estado ni OS por si se modifica en indyco
@@ -120,6 +121,8 @@ def load_data(email, password, data):
 
                     obs_excel = normalizar_texto(obs)
                     obs_indyco = normalizar_texto(row_indyco[12])
+
+                    #print(obs_indyco,f'excel: {obs_excel}', obs_excel == obs_indyco)
 
                     # Comparacion con string de indyco sin saltos de lineas
                     if obs_excel == obs_indyco:
