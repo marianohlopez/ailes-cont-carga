@@ -43,7 +43,7 @@ def load_data(email, password, data):
 
             count_clean += 1
 
-            if count_clean == 3:
+            if count_clean == 5:
                 # Limpiar filtros
                 print("🧹 Limpiando filtros")
                 btn_limpiar.click()
@@ -59,7 +59,7 @@ def load_data(email, password, data):
             input_fc.press("Tab")
             page.wait_for_timeout(1000)
 
-            # Click en Buscar
+            """ # Click en Buscar
             btn_buscar.click()
             page.wait_for_timeout(1000)
 
@@ -70,7 +70,35 @@ def load_data(email, password, data):
                 timeout=20000
             )
             
-            print(f"✅ Factura {fc_id} encontrada en la tabla")
+            print(f"✅ Factura {fc_id} encontrada en la tabla") """
+
+            MAX_INTENTOS = 5
+            encontrado = False
+
+            for intento in range(1, MAX_INTENTOS + 1):
+                print(f"🔄 Intento {intento}: buscando factura {fc_id}")
+
+                btn_buscar.click()
+                page.wait_for_timeout(1500)
+
+                try:
+                    page.wait_for_selector(
+                        f'table#table_base_facturas_emitidas_grid div:has-text("{fc_id}")',
+                        state="attached",
+                        timeout=5000
+                    )
+
+                    print(f"✅ Factura {fc_id} encontrada en la tabla")
+                    encontrado = True
+                    break   # sale solo del loop de reintentos
+
+                except Exception:
+                    print(f"⚠️ Factura {fc_id} no encontrada, reintentando...")
+
+            if not encontrado:
+                print(f"❌ ERROR CRÍTICO: no se encontró la factura {fc_id} después de {MAX_INTENTOS} intentos")
+                browser.close()
+                return   # ⬅ DETIENE load_data COMPLETO
 
             rows = table.locator("tbody tr")
             row_count = rows.count()
