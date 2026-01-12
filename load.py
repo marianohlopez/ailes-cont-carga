@@ -95,14 +95,14 @@ def load_data(email, password, data):
 
                 fact_imp = str(data_row[1]).replace(",", ".")  
                 fec_fact = data_row[2].strftime("%d/%m/%Y")    
-                fec_env = datetime.strptime(data_row[3], "%Y-%m-%d").strftime("%d/%m/%Y")   
+                #fec_env = datetime.strptime(data_row[3], "%Y-%m-%d").strftime("%d/%m/%Y")   
                 periodo = data_row[6]   
-                os_alum = data_row[7].strip()
+                #os_alum = data_row[7].strip()
                 lst_name = data_row[8].split(",")[0].strip()
                 name = data_row[8].split(",")[1].strip()
                 full_name = f'{name} {lst_name}'
                 obs = data_row[-2]
-                state = data_row[5]       
+                #state = data_row[5]       
 
                 """ print(' '.join(row_indyco[30].split()), f'excel: {state}', state == ' '.join(row_indyco[30].split()))
                 print(row_indyco[14], f'excel: {fact_imp}', fact_imp == row_indyco[14])      
@@ -115,8 +115,7 @@ def load_data(email, password, data):
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 # No comparamos estado ni OS por si se modifica en indyco
                 if (fc_id == row_indyco[6] and fact_imp == row_indyco[14] and fec_fact == row_indyco[28]
-                    and fec_env == row_indyco[-21] and periodo == row_indyco[32] 
-                    and full_name == row_indyco[35].split('(')[0].strip()
+                    and periodo == row_indyco[32] and full_name == row_indyco[35].split('(')[0].strip()
                     ):
 
                     obs_excel = normalizar_texto(obs)
