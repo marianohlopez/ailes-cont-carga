@@ -53,11 +53,11 @@ def load_data(email, password, data):
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
 
-            # Filtrando por id de factur
+            """ # Filtrando por id de factur
             input_fc.fill(str(fc_id))
             page.wait_for_timeout(1000)
             input_fc.press("Tab")
-            page.wait_for_timeout(1000)
+            page.wait_for_timeout(1000) """
 
             """ # Click en Buscar
             btn_buscar.click()
@@ -78,6 +78,11 @@ def load_data(email, password, data):
             for intento in range(1, MAX_INTENTOS + 1):
                 print(f"🔄 Intento {intento}: buscando factura {fc_id}")
 
+                # Filtrando por id de factur
+                input_fc.fill(str(fc_id))
+                page.wait_for_timeout(1000)
+                input_fc.press("Tab")
+                page.wait_for_timeout(1000)
                 btn_buscar.click()
                 page.wait_for_timeout(2500)
 
