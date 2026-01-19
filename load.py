@@ -85,7 +85,7 @@ def load_data(email, password, data):
                     page.wait_for_selector(
                         f'table#table_base_facturas_emitidas_grid div:has-text("{fc_id}")',
                         state="attached",
-                        timeout=5000
+                        timeout=10000
                     )
 
                     print(f"✅ Factura {fc_id} encontrada en la tabla")
