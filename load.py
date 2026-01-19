@@ -79,7 +79,7 @@ def load_data(email, password, data):
                 print(f"🔄 Intento {intento}: buscando factura {fc_id}")
 
                 btn_buscar.click()
-                page.wait_for_timeout(1500)
+                page.wait_for_timeout(2500)
 
                 try:
                     page.wait_for_selector(
