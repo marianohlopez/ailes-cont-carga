@@ -1,8 +1,13 @@
 from playwright.sync_api import sync_playwright
 from login import login
 import time
-from datetime import datetime
 import re
+
+def clean(btn_clean, page):
+    print("🧹 Limpiando filtros")
+    btn_clean.click()
+    page.wait_for_timeout(4000)
+    #wait_livewire_idle(page)
 
 def normalizar_texto(txt):
     if not txt:
@@ -12,9 +17,18 @@ def normalizar_texto(txt):
     txt = re.sub(r'\s+', ' ', txt)  # espacios, tabs, saltos de línea
     return txt.strip()
 
+""" def wait_livewire_idle(page, timeout=15000):
+    spinner = page.locator('div[wire\\:loading]')
+
+    # Si aparece, esperamos a que desaparezca
+    try:
+        spinner.wait_for(state="hidden", timeout=timeout)
+    except:
+        pass """
+
 def load_data(email, password, data):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        browser = p.chromium.launch(headless=False)
         context = browser.new_context()
         page = context.new_page()
 
@@ -31,12 +45,10 @@ def load_data(email, password, data):
         table.locator("tbody tr").first.wait_for(state="visible")
 
         # ✅ Selector del filtro por nro de comprobante
-        input_fc = page.locator('#ts-nros-comprobante-ts-control')
-        # BUsco el boton de buscar
+        #input_fc = page.locator('#ts-nros-comprobante-ts-control')
         btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
         btn_limpiar = page.locator('button:has-text("Limpiar")')
-        btn_limpiar.click()
-        page.wait_for_timeout(4000)
+        clean(btn_limpiar, page)
         count_clean = 0
 
         for data_row in data: 
@@ -45,9 +57,7 @@ def load_data(email, password, data):
 
             if count_clean == 5:
                 # Limpiar filtros
-                print("🧹 Limpiando filtros")
-                btn_limpiar.click()
-                page.wait_for_timeout(4000)
+                clean(btn_limpiar, page)
                 count_clean = 0
 
             fc_id = data_row[0] 
@@ -78,13 +88,21 @@ def load_data(email, password, data):
             for intento in range(1, MAX_INTENTOS + 1):
                 print(f"🔄 Intento {intento}: buscando factura {fc_id}")
 
-                # Filtrando por id de factur
+                # Filtrando por id de factura
+                """ 
                 input_fc.fill(str(fc_id))
                 page.wait_for_timeout(1000)
-                input_fc.press("Tab")
+                input_fc.press("Tab") """
+                # 🔁 Re-localizar el input (DOM puede haber cambiado)
+                input_fc = page.locator('#ts-nros-comprobante-ts-control')
+                input_fc.click()
+                input_fc.press("Control+A")
+                input_fc.type(str(fc_id), delay=50)
                 page.wait_for_timeout(1000)
-                btn_buscar.click()
+                input_fc.press("Enter")
+                #input_fc.press("Tab")
                 page.wait_for_timeout(2500)
+                btn_buscar.click()
 
                 try:
                     page.wait_for_selector(
@@ -98,6 +116,13 @@ def load_data(email, password, data):
                     break   # sale solo del loop de reintentos
 
                 except Exception:
+                    """ if intento < MAX_INTENTOS:
+                        print("🧹 Limpiando antes de reintentar")
+                        clean(btn_limpiar, page)
+                        count_clean = 0 """
+                    clean(btn_limpiar, page)
+                    count_clean = 0 
+                    page.reload(wait_until="load")
                     print(f"⚠️ Factura {fc_id} no encontrada, reintentando...")
 
             if not encontrado:
@@ -133,17 +158,14 @@ def load_data(email, password, data):
                 #os_alum = data_row[7].strip()
                 lst_name = data_row[8].split(",")[0].strip()
                 name = data_row[8].split(",")[1].strip()
-                full_name = f'{name} {lst_name}'
+                full_name = f'{lst_name} {name}'
                 obs = data_row[-2]
                 #state = data_row[5]       
 
-                """ print(' '.join(row_indyco[30].split()), f'excel: {state}', state == ' '.join(row_indyco[30].split()))
-                print(row_indyco[14], f'excel: {fact_imp}', fact_imp == row_indyco[14])      
-                print(row_indyco[28], f'excel: {fec_fact}', fec_fact == row_indyco[28])      
-                print(row_indyco[-21], f'excel: {fec_env}', fec_env == row_indyco[-21])      
+                """ print(row_indyco[14], f'excel: {fact_imp}', fact_imp == row_indyco[14])      
+                print(row_indyco[28], f'excel: {fec_fact}', fec_fact == row_indyco[28])           
                 print(row_indyco[32], f'excel: {periodo}', periodo == row_indyco[32])  
-                print(row_indyco[35].split('(')[0].strip(), f'{full_name}' ,full_name == row_indyco[35].split('(')[0].strip())     
-                print(row_indyco[-34],f'excel: {os_alum}', os_alum == row_indyco[-34]) """          
+                print(row_indyco[35].split('(')[0].strip(), f'{full_name}', full_name == row_indyco[35].split('(')[0].strip()) """     
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 # No comparamos estado ni OS por si se modifica en indyco
@@ -153,8 +175,6 @@ def load_data(email, password, data):
 
                     obs_excel = normalizar_texto(obs)
                     obs_indyco = normalizar_texto(row_indyco[12])
-
-                    #print(obs_indyco,f'excel: {obs_excel}', obs_excel == obs_indyco)
 
                     # Comparacion con string de indyco sin saltos de lineas
                     if obs_excel == obs_indyco:
