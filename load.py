@@ -28,7 +28,7 @@ def normalizar_texto(txt):
 
 def load_data(email, password, data):
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=False)
+        browser = p.chromium.launch(headless=True)
         context = browser.new_context()
         page = context.new_page()
 
