@@ -7,7 +7,6 @@ def clean(btn_clean, page):
     print("🧹 Limpiando filtros")
     btn_clean.click()
     page.wait_for_timeout(4000)
-    #wait_livewire_idle(page)
 
 def normalizar_texto(txt):
     if not txt:
@@ -16,15 +15,6 @@ def normalizar_texto(txt):
     txt = txt.replace('<br>', ' ')
     txt = re.sub(r'\s+', ' ', txt)  # espacios, tabs, saltos de línea
     return txt.strip()
-
-""" def wait_livewire_idle(page, timeout=15000):
-    spinner = page.locator('div[wire\\:loading]')
-
-    # Si aparece, esperamos a que desaparezca
-    try:
-        spinner.wait_for(state="hidden", timeout=timeout)
-    except:
-        pass """
 
 def load_data(email, password, data):
     with sync_playwright() as p:
@@ -45,8 +35,6 @@ def load_data(email, password, data):
         table.locator("tbody tr").first.wait_for(state="visible")
 
         # ✅ Selector del filtro por nro de comprobante
-        #input_fc = page.locator('#ts-nros-comprobante-ts-control')
-        btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
         btn_limpiar = page.locator('button:has-text("Limpiar")')
         clean(btn_limpiar, page)
         count_clean = 0
@@ -63,45 +51,23 @@ def load_data(email, password, data):
             fc_id = data_row[0] 
             print(f"📌 Filtrando factura {fc_id}")
 
-            """ # Filtrando por id de factur
-            input_fc.fill(str(fc_id))
-            page.wait_for_timeout(1000)
-            input_fc.press("Tab")
-            page.wait_for_timeout(1000) """
-
-            """ # Click en Buscar
-            btn_buscar.click()
-            page.wait_for_timeout(1000)
-
-            # Esperar a que aparezca el input hidden con el factura_id correcto
-            page.wait_for_selector(
-                f'table#table_base_facturas_emitidas_grid div:has-text("{fc_id}")',
-                state="attached",
-                timeout=20000
-            )
-            
-            print(f"✅ Factura {fc_id} encontrada en la tabla") """
-
             MAX_INTENTOS = 5
             encontrado = False
 
             for intento in range(1, MAX_INTENTOS + 1):
                 print(f"🔄 Intento {intento}: buscando factura {fc_id}")
-
+                btn_buscar = page.locator('form[wire\\:submit\\.prevent="filtrar"] button:has-text("Buscar")')
                 # Filtrando por id de factura
-                """ 
-                input_fc.fill(str(fc_id))
-                page.wait_for_timeout(1000)
-                input_fc.press("Tab") """
+
                 # 🔁 Re-localizar el input (DOM puede haber cambiado)
                 input_fc = page.locator('#ts-nros-comprobante-ts-control')
                 input_fc.click()
                 input_fc.press("Control+A")
-                input_fc.type(str(fc_id), delay=50)
-                page.wait_for_timeout(1000)
+                #input_fc.type(str(fc_id), delay=50)
+                input_fc.fill(str(fc_id))
+                page.wait_for_timeout(2000)
                 input_fc.press("Enter")
-                #input_fc.press("Tab")
-                page.wait_for_timeout(2500)
+                page.wait_for_timeout(1500)
                 btn_buscar.click()
 
                 try:
@@ -116,13 +82,6 @@ def load_data(email, password, data):
                     break   # sale solo del loop de reintentos
 
                 except Exception:
-                    """ if intento < MAX_INTENTOS:
-                        print("🧹 Limpiando antes de reintentar")
-                        clean(btn_limpiar, page)
-                        count_clean = 0 """
-                    clean(btn_limpiar, page)
-                    count_clean = 0 
-                    page.reload(wait_until="load")
                     print(f"⚠️ Factura {fc_id} no encontrada, reintentando...")
 
             if not encontrado:
