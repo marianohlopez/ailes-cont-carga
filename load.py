@@ -123,6 +123,7 @@ def load_data(email, password, data):
                 name_indyco = f'{row_indyco[39].strip()} {row_indyco[40].strip()}'
                 """ print(row_indyco)
                 print('------------------------------------------------------------')
+                
                 print(row_indyco[16], f'excel: {fact_imp}', fact_imp == row_indyco[16])      
                 print(row_indyco[30], f'excel: {fec_fact}', fec_fact == row_indyco[30])           
                 print(row_indyco[35], f'excel: {periodo}', periodo == row_indyco[35])  
@@ -134,7 +135,7 @@ def load_data(email, password, data):
                     and periodo == row_indyco[35] and full_name == name_indyco):
 
                     obs_excel = normalizar_texto(obs)
-                    obs_indyco = normalizar_texto(row_indyco[12])
+                    obs_indyco = normalizar_texto(row_indyco[14])
 
                     # Comparacion con string de indyco sin saltos de lineas
                     if obs_excel == obs_indyco:
