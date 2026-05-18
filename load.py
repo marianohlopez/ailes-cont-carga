@@ -120,22 +120,22 @@ def load_data(email, password, data):
                 full_name = f'{lst_name} {name}'
                 obs = data_row[-2]
                 #state = data_row[5]       
-                name_indyco = f'{row_indyco[41].strip()} {row_indyco[42].strip()}'
+                name_indyco = f'{row_indyco[42].strip()} {row_indyco[43].strip()}'
                 """ print(row_indyco)
                 print('------------------------------------------------------------')
                 
-                print(row_indyco[16], f'excel: {fact_imp}', fact_imp == row_indyco[16])      
-                print(row_indyco[32], f'excel: {fec_fact}', fec_fact == row_indyco[32])           
-                print(row_indyco[36], f'excel: {periodo}', periodo == row_indyco[36])  
-                print(name_indyco, f'{full_name}', full_name == name_indyco)   """   
+                print(row_indyco[17], f'excel: {fact_imp}', fact_imp == row_indyco[17])      
+                print(row_indyco[33], f'excel: {fec_fact}', fec_fact == row_indyco[33])           
+                print(row_indyco[37], f'excel: {periodo}', periodo == row_indyco[37])  
+                print(name_indyco, f'{full_name}', full_name == name_indyco) """     
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 # No comparamos estado ni OS por si se modifica en indyco
-                if (fc_id == row_indyco[6] and fact_imp == row_indyco[16] and fec_fact == row_indyco[32]
-                    and periodo == row_indyco[36] and full_name == name_indyco):
+                if (fc_id == row_indyco[7] and fact_imp == row_indyco[17] and fec_fact == row_indyco[33]
+                    and periodo == row_indyco[37] and full_name == name_indyco):
 
                     obs_excel = normalizar_texto(obs)
-                    obs_indyco = normalizar_texto(row_indyco[14])
+                    obs_indyco = normalizar_texto(row_indyco[15])
 
                     # Comparacion con string de indyco sin saltos de lineas
                     if obs_excel == obs_indyco:
