@@ -112,27 +112,29 @@ def load_data(email, password, data):
 
                 fact_imp = str(data_row[1]).replace(",", ".")  
                 fec_fact = data_row[2].strftime("%d/%m/%Y")    
-                #fec_env = datetime.strptime(data_row[3], "%Y-%m-%d").strftime("%d/%m/%Y")   
                 periodo = data_row[6]   
-                #os_alum = data_row[7].strip()
                 lst_name = data_row[8].split(",")[0].strip()
                 name = data_row[8].split(",")[1].strip()
                 full_name = f'{lst_name} {name}'
                 obs = data_row[-2]
-                #state = data_row[5]       
-                name_indyco = f'{row_indyco[42].strip()} {row_indyco[43].strip()}'
+                name_indyco = f'{row_indyco[46].strip()} {row_indyco[47].strip()}'
+                fact_imp_indyco = row_indyco[17]
+                fec_fact_indyco = row_indyco[37]
+                periodo_indyco = row_indyco[41]
                 """ print(row_indyco)
                 print('------------------------------------------------------------')
                 
                 print(row_indyco[17], f'excel: {fact_imp}', fact_imp == row_indyco[17])      
-                print(row_indyco[33], f'excel: {fec_fact}', fec_fact == row_indyco[33])           
-                print(row_indyco[37], f'excel: {periodo}', periodo == row_indyco[37])  
-                print(name_indyco, f'{full_name}', full_name == name_indyco) """     
+                print(row_indyco[37], f'excel: {fec_fact}', fec_fact == row_indyco[37])           
+                print(row_indyco[41], f'excel: {periodo}', periodo == row_indyco[41])  
+                print(name_indyco, f'excel: {full_name}', full_name == name_indyco)     
+                print(row_indyco[7], f'excel: {fc_id}', fc_id == row_indyco[7])
+                print(normalizar_texto(obs) == normalizar_texto(row_indyco[15])) """
 
                 # Comparar con los datos del excel contable y verificar que la obs no se haya hecho
                 # No comparamos estado ni OS por si se modifica en indyco
-                if (fc_id == row_indyco[7] and fact_imp == row_indyco[17] and fec_fact == row_indyco[33]
-                    and periodo == row_indyco[37] and full_name == name_indyco):
+                if (fc_id == row_indyco[7] and fact_imp == fact_imp_indyco and fec_fact == fec_fact_indyco
+                    and periodo == periodo_indyco and full_name == name_indyco):
 
                     obs_excel = normalizar_texto(obs)
                     obs_indyco = normalizar_texto(row_indyco[15])
