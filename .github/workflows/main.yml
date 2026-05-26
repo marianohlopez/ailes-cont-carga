@@ -55,5 +55,8 @@ jobs:
         env:
           MAIL_USER: ${{ secrets.MAIL_USER }}
           PASSWORD: ${{ secrets.PASSWORD }}
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          MONGO_DB: ${{ secrets.MONGO_DB }}
+          COLLECTION: ${{ secrets.COLLECTION }}
         run: |
           python main.py
