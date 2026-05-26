@@ -21,7 +21,7 @@ def main():
 
   end = time.time()
 
-  full_time = int(end - start)
+  full_time = int(end - start) + 52
 
   register_obs(
     cant_obs_a_ingresar=len(data),
