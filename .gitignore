@@ -1,2 +1,4 @@
 /load_obs_env
 /__pycache__
+
+.env

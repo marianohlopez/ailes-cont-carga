@@ -1,4 +1,5 @@
 playwright 
+pymongo
 pandas 
 openpyxl 
 python-dotenv

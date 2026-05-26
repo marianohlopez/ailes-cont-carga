@@ -17,6 +17,9 @@ def normalizar_texto(txt):
     return txt.strip()
 
 def load_data(email, password, data):
+    obs_ingresadas = 0
+    obs_ing_anteriormente = 0
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         context = browser.new_context()
@@ -141,6 +144,8 @@ def load_data(email, password, data):
 
                     # Comparacion con string de indyco sin saltos de lineas
                     if obs_excel == obs_indyco:
+                        obs_ing_anteriormente += 1
+
                         print(f'La observacion de la factura {fc_id} ya esta en indyco, '
                                 'pasando a la siguiente...')
                         continue
@@ -188,6 +193,7 @@ def load_data(email, password, data):
                             time.sleep(1)
                             
                             print(f"✅ Observación agregada: {data_row[-2]}")
+                            obs_ingresadas += 1
                             time.sleep(2)
                         
                         else:
@@ -202,3 +208,8 @@ def load_data(email, password, data):
         browser.close()
 
     print(f"✅ Proceso completado para {len(data)} facturas")
+
+    return {
+        "obs_ingresadas": obs_ingresadas,
+        "obs_ing_anteriormente": obs_ing_anteriormente
+    }
