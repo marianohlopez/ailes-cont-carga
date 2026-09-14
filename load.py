@@ -119,7 +119,7 @@ def load_data(email, password, data):
                 lst_name = data_row[8].split(",")[0].strip()
                 name = data_row[8].split(",")[1].strip()
                 full_name = f'{lst_name} {name}'
-                obs = data_row[-2]
+                obs = data_row[10]
                 name_indyco = f'{row_indyco[46].strip()} {row_indyco[47].strip()}'
                 fact_imp_indyco = row_indyco[17]
                 fec_fact_indyco = row_indyco[37]
@@ -167,12 +167,12 @@ def load_data(email, password, data):
                         # Localizar y limpiar el textarea
                         textarea = page.locator(textarea_selector)
                         textarea.clear()
-                        
+                                                
                         # Escribir la observación
                         textarea.fill(obs)
                         
-                        # Hacer click en el botón GUARDAR usando el ID
-                        save_button = page.locator('#btn_guardar')
+                        # Hacer click en el botón GUARDAR 
+                        save_button = page.locator('button[wire\\:click\\.prevent="save()"]')
 
                         if save_button.count() > 0:
 
@@ -192,7 +192,7 @@ def load_data(email, password, data):
                             save_button.click()
                             time.sleep(1)
                             
-                            print(f"✅ Observación agregada: {data_row[-2]}")
+                            print(f"✅ Observación agregada: {data_row[10]}")
                             obs_ingresadas += 1
                             time.sleep(2)
                         
