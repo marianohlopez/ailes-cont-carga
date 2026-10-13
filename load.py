@@ -1,7 +1,7 @@
 from playwright.sync_api import sync_playwright
 from login import login
+from db import normalizar_texto, filtrar_no_cargadas
 import time
-import re
 
 MIN_COLS = 48          # el código usa índices hasta row_indyco[47]
 MAX_INTENTOS = 5
@@ -11,16 +11,6 @@ def clean(btn_clean, page):
     print("🧹 Limpiando filtros")
     btn_clean.click()
     page.wait_for_timeout(4000)
-
-
-def normalizar_texto(txt):
-    if not txt:
-        return ''
-    txt = txt.lower()
-    txt = txt.replace('<br>', ' ')
-    txt = re.sub(r'\s+', ' ', txt)  # espacios, tabs, saltos de línea
-    return txt.strip()
-
 
 def leer_fila(table_row, page, min_cols=MIN_COLS, reintentos=3):
     """
@@ -86,6 +76,16 @@ def buscar_factura(page, table, fc_id):
 def load_data(email, password, data):
     obs_ingresadas = 0
     obs_ing_anteriormente = 0
+
+    # Validación previa contra la base
+    data, ya_en_db, sin_match = filtrar_no_cargadas(data)
+
+    if not data:
+        print("✅ No hay observaciones nuevas para cargar")
+        return {
+            "obs_ingresadas": 0,
+            "obs_ing_anteriormente": ya_en_db,
+        }
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
@@ -228,5 +228,5 @@ def load_data(email, password, data):
 
     return {
         "obs_ingresadas": obs_ingresadas,
-        "obs_ing_anteriormente": obs_ing_anteriormente
+        "obs_ing_anteriormente": obs_ing_anteriormente + ya_en_db
     }

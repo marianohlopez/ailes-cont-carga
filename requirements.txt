@@ -1,5 +1,6 @@
 playwright 
 pymongo
+mysql-connector-python
 pandas 
 openpyxl 
 python-dotenv
